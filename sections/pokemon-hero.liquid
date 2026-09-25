@@ -1,0 +1,460 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Fredoka:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<div class="pokemon-bg-fixed">
+  <canvas class="pokemon-hero__particles"></canvas>
+</div>
+
+<div class="pokemon-hero__content">
+  <span class="pokemon-hero__badge">Trading cards</span>
+  <h1 class="pokemon-hero__title">{{ collection.title }}</h1>
+</div>
+
+<script>
+  window.pokemonCardData = {
+    {%- for product in collection.products -%}
+      "{{ product.handle }}": {
+        "brand": {{ product.metafields.custom.brand.value | json }},
+        "set_name": {{ product.metafields.custom.set_name.value | json }},
+        "card_number": {{ product.metafields.custom.card_number.value | json }},
+        "rarity": {{ product.metafields.custom.rarity.value | json }},
+        "release_year": {{ product.metafields.custom.release_year.value | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  };
+</script>
+
+<div id="pokemon-quickview-overlay" class="pokemon-qv-overlay">
+  <div class="pokemon-qv-backdrop"></div>
+  <button class="pokemon-qv-close" aria-label="Close">&times;</button>
+  <div class="pokemon-qv-popwrap">
+
+    <div class="pokemon-qv-imgwrap">
+      <div class="pokemon-qv-glow"></div>
+      <img class="pokemon-qv-image" src="" alt="">
+    </div>
+
+    <div class="pokemon-qv-panel">
+      <div class="pokemon-qv-name"></div>
+      <div class="pokemon-qv-price"></div>
+
+      <div class="pokemon-qv-label">Grading</div>
+      <div class="pokemon-qv-pills"></div>
+
+      <div class="pokemon-qv-label">Quantity</div>
+      <div class="pokemon-qv-qty">
+        <button class="pokemon-qv-qty-minus">-</button>
+        <span class="pokemon-qv-qty-val">1</span>
+        <button class="pokemon-qv-qty-plus">+</button>
+      </div>
+
+      <button class="pokemon-qv-addcart">Add to cart</button>
+      <a class="pokemon-qv-buynow" href="#">Buy it now</a>
+    </div>
+
+    <div class="pokemon-qv-stats"></div>
+
+  </div>
+</div>
+
+<style>
+  .pokemon-bg-fixed {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url({{ 'pokemon-hero-bg.jpg' | asset_url }});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .pokemon-hero__particles { width: 100%; height: 100%; }
+  .pokemon-hero__content { position: relative; z-index: 2; max-width: 600px; padding: 60px 40px; font-family: 'Fredoka', sans-serif; }
+  .pokemon-hero__badge {
+    display: inline-block; font-family: 'Fredoka', sans-serif;
+    background: #FFCB05; color: #0B1220;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .pokemon-hero__title {
+    font-family: 'Titan One', cursive;
+    color: #FFFFFF; -webkit-text-stroke: 1.5px #FFCB05;
+    font-size: 46px; font-weight: 400; letter-spacing: 0.01em;
+    margin: 0; line-height: 1.1;
+    text-shadow: 0 0 18px rgba(255,203,5,0.5);
+  }
+
+  .color-scheme-4, .color-scheme-4 .color-background-1 {
+    background: transparent !important;
+  }
+
+  .card-wrapper {
+    position: relative;
+  }
+  .card-wrapper::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -18px;
+    transform: translateX(-50%);
+    width: 65%;
+    height: 22px;
+    background: radial-gradient(ellipse, rgba(255,203,5,0.5), transparent 72%);
+    filter: blur(9px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .card__inner {
+    border: 2px solid #FFCB05 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(160deg, #101A33, #1B2A55) !important;
+    overflow: hidden;
+    box-shadow: 0 0 25px 4px rgba(255,203,5,0.3), 0 0 55px 14px rgba(255,203,5,0.12);
+    animation: pokemonCardGlow 3s ease-in-out infinite;
+  }
+  @keyframes pokemonCardGlow {
+    0%, 100% { box-shadow: 0 0 25px 4px rgba(255,203,5,0.3), 0 0 55px 14px rgba(255,203,5,0.12); }
+    50%      { box-shadow: 0 0 35px 8px rgba(255,203,5,0.5), 0 0 70px 20px rgba(255,203,5,0.22); }
+  }
+  .card__content {
+    background: transparent !important;
+  }
+
+  .pokemon-qv-overlay {
+    position: fixed; inset: 0; z-index: 999; display: none;
+    align-items: center; justify-content: center; overflow-y: auto; padding: 30px 16px;
+    isolation: isolate;
+    background-image: url({{ 'pokemon-hero-bg.jpg' | asset_url }});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .pokemon-qv-backdrop {
+    position: absolute; inset: 0; z-index: 1;
+    background: rgba(3,6,14,0.55);
+    backdrop-filter: blur(14px); opacity: 0; transition: opacity 0.4s ease;
+    display: block !important;
+  }
+  .pokemon-qv-close {
+    position: absolute; top: 16px; right: 16px; z-index: 1000;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+    color: #FFFFFF; width: 36px; height: 36px; border-radius: 50%;
+    font-size: 20px; line-height: 1; cursor: pointer;
+  }
+
+  .pokemon-qv-popwrap {
+    position: relative; opacity: 0; transform: scale(0.25) rotate(0deg);
+    transition: transform 0.7s cubic-bezier(.2,.75,.15,1), opacity 0.3s ease;
+    display: flex; flex-direction: row; gap: 28px; align-items: flex-start;
+    flex-wrap: nowrap; justify-content: center;
+    max-width: min(920px, 95vw);
+    z-index: 1000;
+  }
+
+  .pokemon-qv-imgwrap { position: relative; flex: 0 0 280px; }
+  .pokemon-qv-glow {
+    position: absolute; inset: -16px; border-radius: 20px;
+    background: #FFCB05; filter: blur(20px); opacity: 0.6;
+  }
+  .pokemon-qv-image {
+    position: relative; width: 280px; aspect-ratio: 3/4; border-radius: 14px;
+    border: 2px solid #FFCB05; object-fit: cover; background: #111; display: block;
+  }
+
+  .pokemon-qv-panel {
+    font-family: 'Fredoka', sans-serif;
+    background: rgba(255,255,255,0.07); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 14px;
+    padding: 20px 22px; flex: 0 0 240px;
+  }
+  .pokemon-qv-name { font-size: 20px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px; }
+  .pokemon-qv-price {
+    font-family: 'Titan One', cursive; font-size: 26px; font-weight: 400;
+    color: #FFCB05; margin-bottom: 16px;
+  }
+  .pokemon-qv-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    color: #B7C0D1; margin-bottom: 7px;
+  }
+  .pokemon-qv-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .pokemon-qv-pill {
+    font-size: 12px; font-weight: 500; padding: 7px 13px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25); color: #B7C0D1; cursor: pointer;
+  }
+  .pokemon-qv-pill.selected {
+    font-weight: 600; border-color: #FFCB05; color: #FFCB05; background: rgba(255,203,5,0.1);
+  }
+  .pokemon-qv-pill.unavailable { opacity: 0.35; text-decoration: line-through; cursor: not-allowed; }
+  .pokemon-qv-qty {
+    display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 6px; width: 100px; margin-bottom: 14px;
+  }
+  .pokemon-qv-qty button {
+    flex: 1; background: none; border: none; color: #FFF; padding: 6px; cursor: pointer; font-size: 14px;
+  }
+  .pokemon-qv-qty-val { flex: 1; text-align: center; font-size: 13px; color: #FFF; }
+  .pokemon-qv-addcart {
+    display: block; width: 100%; border: 1.5px solid #FFCB05; background: none; color: #FFCB05;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    text-align: center; padding: 11px; border-radius: 6px; margin-bottom: 8px; cursor: pointer;
+    box-sizing: border-box;
+  }
+  .pokemon-qv-buynow {
+    display: block; width: 100%; background: #FFCB05; color: #0B1220;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    text-align: center; padding: 11px; border-radius: 6px;
+    text-decoration: none; box-sizing: border-box;
+  }
+
+  .pokemon-qv-stats {
+    font-family: 'Fredoka', sans-serif;
+    background: linear-gradient(160deg, #101A33, #1B2A55);
+    border: 1.5px solid rgba(255,203,5,0.35);
+    border-radius: 12px;
+    padding: 18px 20px;
+    flex: 0 0 240px;
+  }
+  .pokemon-qv-stats-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #FFCB05; margin: 0 0 10px;
+  }
+  .pokemon-qv-stats-rows {
+    display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px;
+  }
+  .pokemon-qv-stat-chip {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 7px; padding: 7px 9px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .pokemon-qv-stat-chip.rarity {
+    background: rgba(255,203,5,0.08); border-color: rgba(255,203,5,0.4);
+  }
+  .pokemon-qv-stat-label {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #8792AA; white-space: nowrap;
+  }
+  .pokemon-qv-stat-chip.rarity .pokemon-qv-stat-label { color: #FFCB05; }
+  .pokemon-qv-stat-value {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #FFFFFF;
+    text-align: right;
+  }
+  .pokemon-qv-stat-chip.rarity .pokemon-qv-stat-value { color: #FFCB05; }
+  .pokemon-qv-stats-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; margin-bottom: 10px;
+  }
+  .pokemon-qv-stats-footer-label {
+    font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8792AA;
+  }
+  .pokemon-qv-stats-footer-value {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #E4E8F0;
+  }
+  .pokemon-qv-desc { font-size: 11.5px; color: #96A3BE; margin: 0; line-height: 1.5; }
+
+  @media (max-width: 700px) {
+    .pokemon-hero__content {
+      padding: 40px 20px;
+    }
+    .pokemon-hero__title {
+      font-size: 30px;
+      -webkit-text-stroke: 1px #FFCB05;
+    }
+
+    .pokemon-qv-popwrap {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 92vw;
+    }
+    .pokemon-qv-imgwrap {
+      flex: 0 0 auto;
+    }
+    .pokemon-qv-image {
+      width: 200px;
+    }
+    .pokemon-qv-panel,
+    .pokemon-qv-stats {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .pokemon-hero__title {
+      font-size: 24px;
+    }
+    .pokemon-qv-image {
+      width: 170px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var canvas = document.querySelector('.pokemon-hero__particles');
+    var ctx = canvas.getContext('2d');
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    var dots = [];
+    for (var i = 0; i < 60; i++) {
+      dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.6+0.4, vy: Math.random()*0.12+0.03, hue: Math.random()>0.7?'255,203,5':'111,150,255', a: Math.random()*0.45+0.15 });
+    }
+    function tick() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      dots.forEach(function(d){ d.y-=d.vy; if(d.y<-5){d.y=canvas.height+5;d.x=Math.random()*canvas.width;} ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fillStyle='rgba('+d.hue+','+d.a+')'; ctx.fill(); });
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+
+  (function() {
+    document.body.appendChild(document.getElementById('pokemon-quickview-overlay'));
+    var overlay = document.getElementById('pokemon-quickview-overlay');
+    var backdrop = overlay.querySelector('.pokemon-qv-backdrop');
+    var popwrap = overlay.querySelector('.pokemon-qv-popwrap');
+    var img = overlay.querySelector('.pokemon-qv-image');
+    var nameEl = overlay.querySelector('.pokemon-qv-name');
+    var priceEl = overlay.querySelector('.pokemon-qv-price');
+    var pillsEl = overlay.querySelector('.pokemon-qv-pills');
+    var qtyVal = overlay.querySelector('.pokemon-qv-qty-val');
+    var addCartBtn = overlay.querySelector('.pokemon-qv-addcart');
+    var buyNowBtn = overlay.querySelector('.pokemon-qv-buynow');
+    var statsEl = overlay.querySelector('.pokemon-qv-stats');
+
+    var currentVariants = [];
+    var currentSelectedVariant = null;
+    var popupDelayTimer = null;
+
+    function money(cents) {
+      return '$' + (cents / 100).toFixed(2) + ' USD';
+    }
+
+    function renderPills() {
+      pillsEl.innerHTML = '';
+      currentVariants.forEach(function(v) {
+        var pill = document.createElement('span');
+        pill.className = 'pokemon-qv-pill' + (v.id === currentSelectedVariant.id ? ' selected' : '') + (!v.available ? ' unavailable' : '');
+        pill.textContent = v.title;
+        pill.addEventListener('click', function() {
+          if (!v.available) return;
+          currentSelectedVariant = v;
+          priceEl.textContent = money(v.price);
+          renderPills();
+        });
+        pillsEl.appendChild(pill);
+      });
+    }
+
+    function statChip(label, value, isRarity) {
+      if (!value) return '';
+      return '<div class="pokemon-qv-stat-chip' + (isRarity ? ' rarity' : '') + '">' +
+        '<span class="pokemon-qv-stat-label">' + label + '</span>' +
+        '<span class="pokemon-qv-stat-value">' + value + '</span>' +
+      '</div>';
+    }
+
+    function openQuickview(handle) {
+      fetch('/products/' + handle + '.js')
+        .then(function(res) { return res.json(); })
+        .then(function(product) {
+          img.src = product.featured_image || (product.images[0] || '');
+          nameEl.textContent = product.title;
+          currentVariants = product.variants;
+          currentSelectedVariant = product.variants.find(function(v) { return v.available; }) || product.variants[0];
+          priceEl.textContent = money(currentSelectedVariant.price);
+          renderPills();
+          qtyVal.textContent = '1';
+          buyNowBtn.href = '/cart/' + currentSelectedVariant.id + ':1';
+
+          var meta = (window.pokemonCardData && window.pokemonCardData[handle]) || {};
+          var desc = product.description ? product.description.replace(/<[^>]+>/g, '') : '';
+          statsEl.innerHTML =
+            '<p class="pokemon-qv-stats-title">Card Details</p>' +
+            '<div class="pokemon-qv-stats-rows">' +
+              statChip('Brand', meta.brand) +
+              statChip('Set', meta.set_name) +
+              statChip('Card #', meta.card_number) +
+              statChip('Rarity', meta.rarity, true) +
+            '</div>' +
+            (meta.release_year ? (
+              '<div class="pokemon-qv-stats-footer">' +
+                '<span class="pokemon-qv-stats-footer-label">Released</span>' +
+                '<span class="pokemon-qv-stats-footer-value">' + meta.release_year + '</span>' +
+              '</div>'
+            ) : '') +
+            (desc ? '<p class="pokemon-qv-desc">' + desc + '</p>' : '');
+
+          // reset state before showing
+          if (popupDelayTimer) { clearTimeout(popupDelayTimer); popupDelayTimer = null; }
+          backdrop.style.opacity = '0';
+          popwrap.style.opacity = '0';
+          popwrap.style.transform = 'scale(0.25) rotate(0deg)';
+
+          overlay.style.display = 'flex';
+
+          void overlay.offsetHeight;
+
+          requestAnimationFrame(function() {
+            backdrop.style.opacity = '1';
+            popupDelayTimer = setTimeout(function() {
+              popwrap.style.opacity = '1';
+              popwrap.style.transform = 'scale(1) rotate(720deg)';
+            }, 120);
+          });
+        });
+    }
+
+    function attachCardListeners() {
+      document.querySelectorAll('.card-wrapper').forEach(function(card) {
+        if (card.dataset.qvBound) return;
+        card.dataset.qvBound = 'true';
+        var link = card.querySelector('a.full-unstyled-link, a.card__heading, a');
+        if (!link) return;
+        var handle = link.href.split('/products/')[1];
+        if (!handle) return;
+        handle = handle.split('?')[0];
+        card.addEventListener('click', function(e) {
+          e.preventDefault();
+          openQuickview(handle);
+        });
+      });
+    }
+    attachCardListeners();
+    new MutationObserver(attachCardListeners).observe(document.body, { childList: true, subtree: true });
+
+    overlay.querySelector('.pokemon-qv-qty-minus').addEventListener('click', function() {
+      qtyVal.textContent = Math.max(1, parseInt(qtyVal.textContent) - 1);
+    });
+    overlay.querySelector('.pokemon-qv-qty-plus').addEventListener('click', function() {
+      qtyVal.textContent = parseInt(qtyVal.textContent) + 1;
+    });
+
+    addCartBtn.addEventListener('click', function() {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: currentSelectedVariant.id, quantity: parseInt(qtyVal.textContent) })
+      }).then(function() {
+        addCartBtn.textContent = 'Added!';
+        setTimeout(function() { addCartBtn.textContent = 'Add to cart'; }, 1500);
+      });
+    });
+
+    function closeOverlay() {
+      if (popupDelayTimer) { clearTimeout(popupDelayTimer); popupDelayTimer = null; }
+      backdrop.style.opacity = '0';
+      popwrap.style.opacity = '0';
+      popwrap.style.transform = 'scale(0.25) rotate(0deg)';
+      setTimeout(function() { overlay.style.display = 'none'; }, 300);
+    }
+    backdrop.addEventListener('click', closeOverlay);
+    overlay.querySelector('.pokemon-qv-close').addEventListener('click', closeOverlay);
+  })();
+</script>
+
+{% schema %}
+{ "name": "Pokemon animated hero", "settings": [], "presets": [{ "name": "Pokemon animated hero" }] }
+{% endschema %}

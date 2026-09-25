@@ -1,0 +1,44 @@
+/* Universal dark header, overriding Dawn's CSS variables so every
+   child element (logo text, icons, nav links) inherits correctly */
+.header-wrapper {
+  --color-background: 11, 18, 32;      /* #0B1220 as R,G,B */
+  --color-foreground: 228, 232, 240;   /* #E4E8F0 as R,G,B */
+  background: linear-gradient(160deg, #0B1220, #0D1530) !important;
+  border-bottom: 2px solid #FFCB05;
+}
+
+.header__icon .svg-wrapper svg {
+  color: rgb(228, 232, 240) !important;
+}
+
+.cart-count-bubble {
+  background: #FFCB05 !important;
+  color: #0B1220 !important;
+}
+
+.list-menu__item--link:hover {
+  color: #FFCB05 !important;
+}
+/* Base underline for whichever link is active, any page */
+.header__active-menu-item {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 3px;
+}
+
+/* Per-collection accent color, keyed to each link's own handle */
+a#HeaderMenu-pokemon[aria-current="page"] .header__active-menu-item {
+  color: #FFCB05;
+}
+a#HeaderMenu-f1[aria-current="page"] .header__active-menu-item {
+  color: #FF3B30;
+}
+a#HeaderMenu-nba[aria-current="page"] .header__active-menu-item {
+  color: #F58426;
+}
+.header-nav-active {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 3px;
+}
+.header-nav-active.nav-pokemon { color: #FFCB05 !important; }
+.header-nav-active.nav-f1      { color: #FF3B30 !important; }
+.header-nav-active.nav-nba     { color: #F58426 !important; }
