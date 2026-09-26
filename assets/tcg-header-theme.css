@@ -7,8 +7,48 @@
   border-bottom: 2px solid #FFCB05;
 }
 
+/* Logo badge + store name */
+.header__heading-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.header__heading-link::before {
+  content: "T";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #FFCB05;
+  color: #0B1220;
+  font-family: 'Titan One', cursive;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.header__heading-link .h2,
+.header__heading-link span {
+  font-family: 'Titan One', cursive !important;
+  font-size: 19px !important;
+  color: #FFFFFF !important;
+}
+
+/* Nav links */
+.list-menu__item--link {
+  font-family: 'Fredoka', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+.list-menu__item--link:hover {
+  color: #FFCB05 !important;
+}
+
 .header__icon .svg-wrapper svg {
   color: rgb(228, 232, 240) !important;
+}
+.header__icon:hover .svg-wrapper svg {
+  color: #FFCB05 !important;
 }
 
 .cart-count-bubble {
@@ -16,25 +56,7 @@
   color: #0B1220 !important;
 }
 
-.list-menu__item--link:hover {
-  color: #FFCB05 !important;
-}
-/* Base underline for whichever link is active, any page */
-.header__active-menu-item {
-  border-bottom: 2px solid currentColor;
-  padding-bottom: 3px;
-}
-
-/* Per-collection accent color, keyed to each link's own handle */
-a#HeaderMenu-pokemon[aria-current="page"] .header__active-menu-item {
-  color: #FFCB05;
-}
-a#HeaderMenu-f1[aria-current="page"] .header__active-menu-item {
-  color: #FF3B30;
-}
-a#HeaderMenu-nba[aria-current="page"] .header__active-menu-item {
-  color: #F58426;
-}
+/* Per-collection active-link color, set by header-dropdown-menu.liquid's script */
 .header-nav-active {
   border-bottom: 2px solid currentColor;
   padding-bottom: 3px;
