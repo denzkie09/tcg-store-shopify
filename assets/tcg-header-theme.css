@@ -1,5 +1,4 @@
-/* Universal dark header, overriding Dawn's CSS variables so every
-   child element (logo text, icons, nav links) inherits correctly */
+/* ===== HEADER ===== */
 .header-wrapper {
   --color-background: 11, 18, 32;      /* #0B1220 as R,G,B */
   --color-foreground: 228, 232, 240;   /* #E4E8F0 as R,G,B */
@@ -7,7 +6,6 @@
   border-bottom: 2px solid #FFCB05;
 }
 
-/* Logo badge + store name */
 .header__heading-link {
   display: inline-flex !important;
   align-items: center;
@@ -34,7 +32,6 @@
   color: #FFFFFF !important;
 }
 
-/* Nav links */
 .list-menu__item--link {
   font-family: 'Fredoka', sans-serif !important;
   font-size: 13px !important;
@@ -56,7 +53,6 @@
   color: #0B1220 !important;
 }
 
-/* Per-collection active-link color, set by header-dropdown-menu.liquid's script */
 .header-nav-active {
   border-bottom: 2px solid currentColor;
   padding-bottom: 3px;
@@ -64,3 +60,61 @@
 .header-nav-active.nav-pokemon { color: #FFCB05 !important; }
 .header-nav-active.nav-f1      { color: #FF3B30 !important; }
 .header-nav-active.nav-nba     { color: #F58426 !important; }
+
+/* ===== FOOTER ===== */
+.footer {
+  --color-background: 11, 18, 32;
+  --color-foreground: 228, 232, 240;
+  background: linear-gradient(160deg, #0D1530, #0B1220) !important;
+  border-top: 2px solid #FFCB05;
+}
+
+.footer-block__heading {
+  font-family: 'Titan One', cursive !important;
+  color: #FFFFFF !important;
+  font-size: 18px !important;
+  -webkit-text-stroke: 0.5px #FFCB05;
+}
+
+.footer .list-menu__item--link {
+  color: #B7BCC9 !important;
+}
+.footer .list-menu__item--link:hover {
+  color: #FFCB05 !important;
+}
+
+.newsletter-form .field__input {
+  font-family: 'Fredoka', sans-serif;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #FFFFFF !important;
+}
+.newsletter-form .field__input::placeholder {
+  color: #8792AA !important;
+}
+.newsletter-form .field__label {
+  color: #8792AA !important;
+}
+.newsletter-form__button {
+  background: #FFCB05 !important;
+}
+.newsletter-form__button .svg-wrapper svg {
+  color: #0B1220 !important;
+}
+
+.footer__list-social a {
+  color: #E4E8F0 !important;
+}
+.footer__list-social a:hover {
+  color: #FFCB05 !important;
+}
+
+.footer__copyright,
+.footer__copyright a,
+.copyright__content {
+  color: #6B7488 !important;
+}
+
+.footer .list-payment__item svg {
+  opacity: 0.85;
+}
